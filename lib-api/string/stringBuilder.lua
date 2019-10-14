@@ -80,7 +80,7 @@ stringbuilderFunctions.space = function(self, num)
   end
 end
 
-stringbuilderFunctions.hash = function(self,number)
+stringbuilderFunctions.slice = function(self,number)
 	local num = type(number)=="number" and number or 1
 	local tTable = {}
 	for i=1, #getText(self), num do
@@ -128,7 +128,7 @@ stringbuilder.new = function(txt)
     __index=stringbuilderFunctions,
     __add=stringbuilderFunctions.add,
 	__mul=stringbuilderFunctions.rep,
-	__div=stringbuilderFunctions.hash,
+	__div=stringbuilderFunctions.slice,
     __concat=stringbuilderFunctions.add,
     __tostring=function(tble) return getmetatable(tble).__txt end,
     __txt=txt,
