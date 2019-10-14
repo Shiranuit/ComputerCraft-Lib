@@ -52,11 +52,11 @@ stringbuilderFunctions.left = function(self, length)
 	return stringB.new(string.sub(getText(self), 1, length))
 end
 
-stringbuilderFunctions.lTrim = function(self)
+stringbuilderFunctions.trimLeft = function(self)
 	return stringB.new(string.match(getText(self),"([^ ][ ]*.+)"))
 end
 
-stringbuilderFunctions.rTrim = function(self)
+stringbuilderFunctions.trimRight = function(self)
 	return stringB.new(string.match(getText(self),"(.+[^ ]).*$"))
 end
 
