@@ -1,0 +1,54 @@
+local args = { ... }
+
+local function stackTrace(err, count)
+  local stack = {}
+  local i,stackEnd=4,false
+  while i < count or count == -1 do
+    local success, _error = pcall(function() error("<[&STACKEND&]>",i) end)
+    i=i+1
+    if _error == "xpcall: <[&STACKEND&]>" or _error == "pcall: <[&STACKEND&]>" then
+      stackEnd=true
+      break
+    end
+    stack[#stack+1]=" at ".._error:match("^(.-:%d+)")
+  end
+  table.remove(stack)
+  table.remove(stack,1)
+  if stackEnd then
+    stack[#stack+1]="..."
+  end
+  return table.concat(stack,"\n")
+end
+
+local function debug(func,count,args)
+  xpcall(function() func(unpack(args)) end, function(err)
+    local stack = stackTrace(err,count)
+    printError(err)
+    printError(stack)
+  end)
+end
+
+function traceback(...)
+  local args = {...}
+  if #args > 0 then
+    if type(args[1]) == "function" then
+      debug(args[1],tonumber(args[2]) or 10,{select(3,...)})
+    elseif type(args[1]) == "string" then
+      if fs.exists(args[1]) then
+        local h=fs.open(args[1],"r")
+        local code=h.readAll()
+        h.close()
+        local func, err = load(code, args[1], "t", _G)
+        if func and not err then
+          debug(func,tonumber(args[2]) or 10,{select(3,...)})
+        else
+          printError(err)
+        end
+      else
+        printError("File '"..args[1].."' not found")
+      end
+    end
+  end
+end
+
+traceback(unpack(args))
